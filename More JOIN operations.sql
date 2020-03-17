@@ -119,10 +119,43 @@ WHERE movie.id IN (SELECT movieid
 -- 13. Obtain a list, in alphabetical order, of actors who've had at least 15 starring roles.
 
 
+-- tricky, the COUNT condition does not work on where clause here, I don't know why?
+
+SELECT name
+FROM actor JOIN casting 
+ON (id = actorid AND (SELECT COUNT(ord) 
+                      FROM casting 
+                      WHERE actorid = actor.id AND ord=1)>=15)
+GROUP BY name
 
 
 
+-- 14. List the films released in the year 1978 ordered by the number of actors in the cast, then by title.
+                                      
 
+-- if we don't use GROUP BY title, it just gives one tuple according to count function
+
+SELECT title, COUNT(actorid) as cast
+FROM movie JOIN casting 
+ON (id = movieid)
+WHERE yr = 1978
+GROUP BY title
+ORDER BY cast DESC, title;
+                                      
+                                      
+                                      
+                                      
+ -- 15. List all the people who have worked with 'Art Garfunkel'.
+                                      
+                                      
+ SELECT name
+FROM actor JOIN casting
+ON id=actorid
+WHERE name != 'Art Garfunkel' AND
+      movieid IN ( SELECT y.movieid
+                   FROM   actor x JOIN casting y
+                   ON     x.id=y.actorid
+                   WHERE  x.name = 'Art Garfunkel');                                    
 
 
 
